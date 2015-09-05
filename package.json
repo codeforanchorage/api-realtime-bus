@@ -1,0 +1,26 @@
+{
+  "name": "api-realtime-bus",
+  "version": "1.0.0",
+  "description": "Realtime Bus API",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ragingsmurf/api-realtime-bus.git"
+  },
+  "keywords": [
+    "anchorage",
+    "alaska"
+  ],
+  "author": "James Davis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ragingsmurf/api-realtime-bus/issues"
+  },
+  "homepage": "https://github.com/ragingsmurf/api-realtime-bus#readme",
+  "devDependencies": {
+    "mocha": "^2.3.0"
+  }
+}
