@@ -4,7 +4,8 @@
   "description": "Realtime Bus API",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "start": "node --harmony app.js",
+    "test": "mocha --harmony-generators -u bdd -R spec"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,16 @@
   },
   "homepage": "https://github.com/ragingsmurf/api-realtime-bus#readme",
   "devDependencies": {
-    "mocha": "^2.3.0"
+    "mocha": "^2.3.0",
+    "supertest": "^1.1.0"
+  },
+  "dependencies": {
+    "co-body": "^4.0.0",
+    "co-monk": "^1.0.0",
+    "koa": "^1.0.0",
+    "koa-request": "^1.0.0",
+    "koa-route": "^2.4.2",
+    "monk": "^1.0.1",
+    "xml2js": "^0.4.12"
   }
 }
