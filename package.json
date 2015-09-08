@@ -4,7 +4,7 @@
   "description": "Realtime Bus API",
   "main": "index.js",
   "scripts": {
-    "start": "node --harmony app.js",
+    "start": "node --harmony ./bin/www.js",
     "test": "mocha --harmony-generators -u bdd -R spec"
   },
   "repository": {
@@ -31,7 +31,9 @@
     "koa": "^1.0.0",
     "koa-request": "^1.0.0",
     "koa-route": "^2.4.2",
+    "later": "^1.1.9",
     "monk": "^1.0.1",
+    "request": "^2.61.0",
     "xml2js": "^0.4.12"
   }
 }

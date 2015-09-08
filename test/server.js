@@ -1,6 +1,6 @@
 //var assert = require("assert");
 
-var app = require('./../app.js');
+var app = require('./../bin/www.js');
 var request = require("supertest").agent(app.listen());
 
 describe("Default Page", function() {
