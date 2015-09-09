@@ -5,3 +5,6 @@ The goal is to use XML from Infopoint and copy it to a a server once a minute. T
 The realtime ETAs comes from [here.](http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml)
 
 The goal would be to have it up and working before Snow City gives away free coffee for there being an inch of snow that sticks in Anchorage this year.
+
+Promising solution for using GTFS buffers in javaScript. 
+https://stackoverflow.com/questions/18523235/how-do-you-decode-gtfs-protobufs-in-node
