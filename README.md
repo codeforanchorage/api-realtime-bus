@@ -6,5 +6,8 @@ The realtime ETAs comes from [here.](http://bustracker.muni.org/InfoPoint/XML/st
 
 The goal would be to have it up and working before Snow City gives away free coffee for there being an inch of snow that sticks in Anchorage this year.
 
-Promising solution for using GTFS buffers in javaScript. 
+GTFS buffers in javaScript. 
 https://stackoverflow.com/questions/18523235/how-do-you-decode-gtfs-protobufs-in-node
+
+Testable live feed.
+http://developer.trimet.org/ws/V1/FeedSpecAlerts/?appID=618F30BB3062F39AF24AED9EC
