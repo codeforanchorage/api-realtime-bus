@@ -51,11 +51,12 @@ describe.skip('Webclient', function() {
 
     // HTTP GET the binary feed
     http.get('http://localhost:3000/feedtest', parse);
+    //http.get('http://developer.trimet.org/ws/V1/FeedSpecAlerts/?appID=618F30BB3062F39AF24AED9EC', parse);
 
     // process the feed
     function parse(res) {
         // gather the data chunks into a list
-        var data = [];
+        var data = '';
 
         // res.on('data', function(chunk) {
         //   data.push(chunk);
@@ -73,22 +74,21 @@ describe.skip('Webclient', function() {
         // });
 
         res.on('data', function(chunk) {
-          data.push(chunk);
+          data = data + (chunk);
         }).on('end', function() {
           //at this point data is an array of Buffers
           //so we take each octet in each of the buffers
           //and combine them into one big octet array to pass to a
           //new buffer instance constructor
-          var buffer = new Buffer(data.reduce(function(prev, current) {
-            return prev.concat(Array.prototype.slice.call(current));
-          }, []));
-
-          console.log(buffer);
+          // var buffer = new Buffer(data.reduce(function(prev, current) {
+          //   return prev.concat(Array.prototype.slice.call(current));
+          // }, []));
+          //
+          // console.log(buffer);
 
           //console.log(({}).toString.call(buffer).match(/\s([a-zA-Z]+)/)[1].toLowerCase());
-
-          var rslt = GtfsRealtimeBindings.TimeRange.decode(buffer);
-
+          var rslt = transit.TimeRange.decode64(data);
+          console.log(rslt);
           done();
         });
       };

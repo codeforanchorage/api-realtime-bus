@@ -7,7 +7,7 @@ var parser = require('../parser.js');
 var scheduler = require('../schedule.js');  //Start the Muni.org parser.
 
 //Schedule jobs to run against muni live data.
-scheduler.schedulejob(parser.stopsdepartures);
+//scheduler.schedulejob(parser.stopsdepartures);
 
 //Routing
 app.use(routes.get('/', routing.getDefault));

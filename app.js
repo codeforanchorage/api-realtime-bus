@@ -15,31 +15,34 @@ module.exports.getDefault = function * getDefault() {
 //Send test feed.
 module.exports.getFeedTest = function * getFeed() {
   //Load test proto instance.
-  var builder = ProtoBuf.loadProtoFile('./gtfs-realtime.proto');
-  var root = builder.build('transit_realtime');
-  var obj = new root.TimeRange();
+  // var builder = ProtoBuf.loadProtoFile('./gtfs-realtime.proto');
+  // var root = builder.build('transit_realtime');
+  // var obj = new root.TimeRange();
 
   // var builder = ProtoBuf.loadProtoFile('./json.proto');
   // var root = builder.build('js');
   // var obj = new root.Component();
 
   //Set values, pass validation.
-  // obj.id = '1';
-  // obj.name = 'Muni.org';
-  // obj.version = '1';
-  obj.start = '1';
-  console.log('Sending Object' + obj);
+  //obj.id = '1';
+  //obj.name = 'Muni.org';
+  //obj.version = '1';
+  //obj.start = 1;
+  //obj.end = 2;
 
-  //console.log('Sending:' + obj.encode());
-  //console.log('Sending length: ' + obj.encode().buffer.length);
+  //Load test proto instance.
+  var builder = ProtoBuf.loadProtoFile('./json.proto');
+  var root = builder.build('js');
+  var obj = new root.Component();
 
-  var bb = new Buffer(obj.encode().length);
-  var enc = obj.encode();
-  bb.writeInt8(0);
-  //bb.writeVarint32(enc.remaining());
-  bb.append(enc);
+  //Populate, pass enough to get by validation.
+  obj.id = '1';
+  obj.name = 'Muni.org';
+  obj.version = '1';
 
-  //Setup the response
-  this.body = bb;
+  //Setup the response buffer.
+  this.body = obj.encode().buffer;
+  this.set('content-type', 'application/grtfeed');
   this.status = 200;
+
 };
