@@ -11,7 +11,8 @@ var scheduler = require('../schedule.js');  //Start the Muni.org parser.
 
 //Routing
 app.use(routes.get('/', routing.getDefault));
-app.use(routes.get('/feedtest', routing.getFeedTest));
+app.use(routes.get('/testmessage', routing.getTestMessage));
+app.use(routes.get('/gtfsmessage', routing.getGTFSMessage));
 
 //app.use(routes.get("/stops", routing.getStopsDepartures));
 
