@@ -2,26 +2,26 @@ var ProtoBuf = require('protobufjs');
 var assert = require('assert');
 
 describe('ProtoBuf library', function() {
-  it('can encode and decode a TimeRange gtfs object', function() {
+  it('can encode and decode a TimeRange GTFS object', function() {
 
     //Load test proto instance.
     var builder = ProtoBuf.loadProtoFile('./gtfs-realtime.proto');
     var root = builder.build('transit_realtime');
     var obj = new root.TimeRange();
 
-    //Set values, pass validation.
+    //Set values (pass validation)
     obj.start = 1;
     obj.end = 2;
 
     var rslt = root.TimeRange.decode(obj.encode());
 
-    assert.equal(rslt.start.low, 1, 'Expected value for start of TimeRange instance!');
+    assert.equal(rslt.start.low, 1, 'Expected start value of 1 in TimeRange instance.');
 
   });
 });
 
 describe('ProtoBuf library', function() {
-  it('can create an encode-able FeedMessage gtfs object', function(done) {
+  it('can create an encoded FeedMessage gtfs object', function(done) {
     var transit = ProtoBuf.protoFromFile('./gtfs-realtime.proto').build('transit_realtime');
     var fm = new transit.FeedMessage();
     var fh = new transit.FeedHeader();

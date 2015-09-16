@@ -1,12 +1,16 @@
-var app = require('./../bin/www.js');
-var request = require('supertest').agent(app.listen(3001));
-var ProtoBuf = require('protobufjs');
 var http = require('http');
 var assert = require('assert');
-var request = require('request');
+var ProtoBuf = require('protobufjs');
+var parseString = require('xml2js').parseString;
+
+// Supertest Web App
+var app = require('./../bin/www.js');
+var request = require('supertest').agent(app.listen(3001));
+
+// Muni XML Feed Parser
 var parser = require('./../parser');
 
-describe('GET Request', function() {
+describe('GET', function() {
   it('can retrieve a root web response', function(done) {
     request
       .get('/')
@@ -18,45 +22,43 @@ describe('GET Request', function() {
   });
 });
 
-describe('GET Request', function() {
-  it('can download and encode the Muni routes and departures xml feed', function(done) {
-    this.timeout(15000);
-
-    var options = {
-      url: 'http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml',
-      headers: { 'User-Agent': 'request' },
-    };
+describe('GET', function() {
+  it('can retrieve JSON encoded Muni routes and departures from live xml feed', function(done) {
+    this.timeout(10000);
 
     var options = {
       host:'bustracker.muni.org',
       path:'/InfoPoint/XML/stopdepartures.xml',
-      port: '3000',
+
+      //port: '3000',
       agent: false,
       headers:{'Cache-Control':'no-cache'},
     };
 
-    request(options, function(error, response, body) {
-      if (!error && response.statusCode == 200) {
-        //console.log("Finished Fetching.");
-        //Parse the XML into an Object.
-        parseString(response.body, function(err, result) {
+    // Grab feed, parse results.
+    http.get(options, parse);
 
-          //var jason = JSON.parse(result);
-          console.log('bustracker xml feed updated: ' + result.departures.generated[0]._);
+    // process the feed
+    function parse(res) {
+      var data = '';
+      var timestamp = undefined;
+      res.on('data', function(chunk) {
+        data = data + chunk;
+      });
 
-          //return JSON.parse(result);
-          return result;
-
+      res.on('end', function() {
+        parseString(data, function(err, result) {
+          assert.equal(result.departures !== undefined, true);
+          timestamp = result.departures.generated[0]._;
           done();
-
         });
-      };
-    });
+      });
+    };
   });
 });
 
-describe('GET Request', function() {
-  it('can download a binary object from /gtfsmessage, and decode it into a FeedMessage', function(done) {
+describe('GET', function() {
+  it('can retrieve a binary object from /gtfsmessage, and decode it into a FeedMessage', function(done) {
     var http = require('http');
     var transit = ProtoBuf.protoFromFile('./gtfs-realtime.proto').build('transit_realtime');
     var options = {
@@ -94,8 +96,8 @@ describe('GET Request', function() {
   });
 });
 
-describe('GET Request', function() {
-  it('can download .proto binary object from /testmessage, and decode it a Component', function(done) {
+describe('GET', function() {
+  it('can download a binary object from /testmessage, and decode it into a Component', function(done) {
     var http = require('http');
     var builder = ProtoBuf.loadProtoFile('./json.proto');
     var root = builder.build('js');
