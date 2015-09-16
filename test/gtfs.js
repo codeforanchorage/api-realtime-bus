@@ -21,7 +21,7 @@ describe('ProtoBufJS (.proto processing)', function() {
 });
 
 describe('ProtoBufJS (.proto processing)', function() {
-  it('can create an encoded FeedMessage gtfs object', function(done) {
+  it('can create an encoded FeedMessage GTFS object', function(done) {
     var transit = ProtoBuf.protoFromFile('./gtfs-realtime.proto').build('transit_realtime');
     var fm = new transit.FeedMessage();
     var fh = new transit.FeedHeader();
