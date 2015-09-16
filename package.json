@@ -23,6 +23,7 @@
   "homepage": "https://github.com/ragingsmurf/api-realtime-bus#readme",
   "devDependencies": {
     "mocha": "^2.3.0",
+    "q": "^1.4.1",
     "supertest": "^1.1.0"
   },
   "dependencies": {

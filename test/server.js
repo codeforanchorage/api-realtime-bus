@@ -7,9 +7,6 @@ var parseString = require('xml2js').parseString;
 var app = require('./../bin/www.js');
 var request = require('supertest').agent(app.listen(3001));
 
-// Muni XML Feed Parser
-var parser = require('./../parser');
-
 describe('GET', function() {
   it('can retrieve a root web response', function(done) {
     request
@@ -19,41 +16,6 @@ describe('GET', function() {
         if (err) throw err;
         done();
       });
-  });
-});
-
-describe('GET', function() {
-  it('can retrieve JSON encoded Muni routes and departures from live xml feed', function(done) {
-    this.timeout(10000);
-
-    var options = {
-      host:'bustracker.muni.org',
-      path:'/InfoPoint/XML/stopdepartures.xml',
-
-      //port: '3000',
-      agent: false,
-      headers:{'Cache-Control':'no-cache'},
-    };
-
-    // Grab feed, parse results.
-    http.get(options, parse);
-
-    // process the feed
-    function parse(res) {
-      var data = '';
-      var timestamp = undefined;
-      res.on('data', function(chunk) {
-        data = data + chunk;
-      });
-
-      res.on('end', function() {
-        parseString(data, function(err, result) {
-          assert.equal(result.departures !== undefined, true);
-          timestamp = result.departures.generated[0]._;
-          done();
-        });
-      });
-    };
   });
 });
 

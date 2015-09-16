@@ -1,41 +1,40 @@
 
-var request = require('request');
+var assert = require('assert');
+var http = require('http');
+var q = require('q');
 var parseString = require('xml2js').parseString;
 
 //Fetches all stops & depatures, return an Obj array
-function fetchStopsDepartures(done) {
-
-  var options = {
-    url: 'http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml',
-    headers: { 'User-Agent': 'request' },
-  };
-
+function fetchStopsDepartures() {
   var options = {
     host:'bustracker.muni.org',
     path:'/InfoPoint/XML/stopdepartures.xml',
-    port: '3000',
     agent: false,
     headers:{'Cache-Control':'no-cache'},
   };
+  var d = q.defer();
 
-  request(options, function(error, response, body) {
-    if (!error && response.statusCode == 200) {
-      //console.log("Finished Fetching.");
+  // Grab feed, parse results.
+  http.get(options, parse);
 
-      //Parse the XML into an Object.
-      parseString(response.body, function(err, result) {
+  // process the feed
+  function parse(res) {
+    var data = '';
+    res.on('data', function(chunk) {
+      data = data + chunk;
+    });
 
-        //var jason = JSON.parse(result);
-        console.log('bustracker xml feed updated: ' + result.departures.generated[0]._);
-
-        //return JSON.parse(result);
-        return result;
-
-        done();
-
+    res.on('end', function() {
+      parseString(data, function(err, result) {
+        d.resolve({
+          time:result.departures.generated[0]._,
+          data:result,
+        });
       });
-    };
-  });
+    });
+  };
+
+  return d.promise;
 
 };
 

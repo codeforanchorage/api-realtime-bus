@@ -1,7 +1,7 @@
 var ProtoBuf = require('protobufjs');
 var assert = require('assert');
 
-describe('ProtoBuf library', function() {
+describe('ProtoBufJS (.proto processing)', function() {
   it('can encode and decode a TimeRange GTFS object', function() {
 
     //Load test proto instance.
@@ -20,7 +20,7 @@ describe('ProtoBuf library', function() {
   });
 });
 
-describe('ProtoBuf library', function() {
+describe('ProtoBufJS (.proto processing)', function() {
   it('can create an encoded FeedMessage gtfs object', function(done) {
     var transit = ProtoBuf.protoFromFile('./gtfs-realtime.proto').build('transit_realtime');
     var fm = new transit.FeedMessage();
