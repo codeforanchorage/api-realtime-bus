@@ -9,7 +9,7 @@ var parseString = require('xml2js').parseString;
 var app = require('./../bin/www.js');
 var request = require('supertest').agent(app.listen(3001));
 
-describe.skip('GET', function() {
+describe('GET', function() {
   it('can retrieve a root web response', function(done) {
     request
       .get('/')
@@ -21,7 +21,7 @@ describe.skip('GET', function() {
   });
 });
 
-describe.skip('GET', function() {
+describe('GET', function() {
   it('can retrieve a binary from /gtfsmessage, decode it into a FeedMessage',
   function(done) {
     var http = require('http');
@@ -64,7 +64,7 @@ describe.skip('GET', function() {
   });
 });
 
-describe.skip('GET', function() {
+describe('GET', function() {
   it('can download a binary from /testmessage, and decode into Component',
   function(done) {
     var http = require('http');

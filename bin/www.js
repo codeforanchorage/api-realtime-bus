@@ -4,35 +4,33 @@ var routes = require('koa-route');
 var port = normalizePort(process.env.PORT || '3000');
 var routing = require('../app.js');
 var parser = require('../parser.js');
-var scheduler = require('../schedule.js');  //Start the Muni.org parser.
+var scheduler = require('../schedule.js'); // Start the Muni.org parser.
 
-//Schedule jobs to run against muni live data.
-//scheduler.schedulejob(parser.stopsdepartures);
+// Schedule jobs to run against muni live data.
+// scheduler.schedulejob(parser.stopsdepartures);
 
-//Routing
+// Routing
 app.use(routes.get('/', routing.getDefault));
 app.use(routes.get('/testmessage', routing.getTestMessage));
 app.use(routes.get('/gtfsmessage', routing.getGTFSMessage));
 
-//app.use(routes.get("/stops", routing.getStopsDepartures));
-
 app.on('error', function(err) {
-  log.error('nodejs server error', err);
+  log.error('nodejs server error: ', err);
 });
 
-//Listening
+// Listening
 app.listen(port);
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
 
   if (isNaN(port)) {
-    // named pipe
+    // Named pipe
     return val;
   }
 
   if (port >= 0) {
-    // port number
+    // Port number
     return port;
   }
 

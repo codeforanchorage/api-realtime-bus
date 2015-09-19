@@ -29,13 +29,11 @@
   },
   "dependencies": {
     "co-body": "^4.0.0",
-    "co-monk": "^1.0.0",
     "gtfs-realtime-bindings": "0.0.4",
     "koa": "^1.0.0",
     "koa-request": "^1.0.0",
     "koa-route": "^2.4.2",
     "later": "^1.1.9",
-    "monk": "^1.0.1",
     "protobufjs": "^4.0.0",
     "request": "^2.61.0",
     "xml2js": "^0.4.12"

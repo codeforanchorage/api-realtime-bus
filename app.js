@@ -1,10 +1,6 @@
 'use strict';
 
 var parse = require('co-body');
-var monk = require('monk');
-var wrap = require('co-monk');
-var db = monk('192.168.59.103/Realtime');
-var oneTable = wrap(db.get('one'));
 var ProtoBuf = require('protobufjs');
 
 // Send default page
