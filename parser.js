@@ -7,7 +7,7 @@ var fs = require('fs');
 var parseString = require('xml2js').parseString;
 
 // Fetches all stops & depatures, return an Obj array
-function fetchStopsDepartures() {
+function fetchStopsDepartures(liveFetch) {
   var options = {
     host: 'bustracker.muni.org',
     path: '/InfoPoint/XML/stopdepartures.xml',
@@ -17,7 +17,7 @@ function fetchStopsDepartures() {
   var d = q.defer();
   var sd = __dirname + '/stopdepartures.xml';
 
-  if (fs.existsSync(sd)) {
+  if (fs.existsSync(sd) && !liveFetch) {
     // Grab a local file, parse results.
     fs.readFile(sd, function(err, data) {
       if (err) { throw err; };
@@ -42,7 +42,7 @@ function fetchStopsDepartures() {
 
       res.on('end', function() {
         parseString(data, function(err, result) {
-          console.log('      Static data: ' + result.departures.generated[0]._);
+          console.log('      Live data: ' + result.departures.generated[0]._);
           d.resolve({
             time: result.departures.generated[0]._,
             data: result,
@@ -50,14 +50,6 @@ function fetchStopsDepartures() {
         });
       });
     };
-  }
-
-  var x = 2;
-  var y = 1;
-  var i = 4;
-  if (x > y) {
-    let gamma = 12.7 + y;
-    i = gamma * x;
   }
 
   return d.promise;
