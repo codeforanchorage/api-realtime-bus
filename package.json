@@ -4,14 +4,15 @@
   "description": "Realtime Bus API",
   "main": "index.js",
   "scripts": {
-    "start": "node --harmony ./bin/www.js",
-    "test": "mocha --harmony-generators -u bdd -R spec"
+    "start": "node ./bin/www.js",
+    "test": "mocha -u bdd -R spec"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ragingsmurf/api-realtime-bus.git"
   },
   "keywords": [
+    "peoplemover",
     "anchorage",
     "alaska"
   ],

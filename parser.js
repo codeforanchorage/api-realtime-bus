@@ -1,3 +1,4 @@
+'use strict';
 
 var assert = require('assert');
 var http = require('http');
@@ -49,6 +50,14 @@ function fetchStopsDepartures() {
         });
       });
     };
+  }
+
+  var x = 2;
+  var y = 1;
+  var i = 4;
+  if (x > y) {
+    let gamma = 12.7 + y;
+    i = gamma * x;
   }
 
   return d.promise;

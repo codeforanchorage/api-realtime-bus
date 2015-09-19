@@ -1,3 +1,5 @@
+'use strict';
+
 var ProtoBuf = require('protobufjs');
 var assert = require('assert');
 

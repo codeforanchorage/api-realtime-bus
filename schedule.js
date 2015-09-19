@@ -1,3 +1,5 @@
+'use strict';
+
 var later = require('later');
 var activebuses;
 var occurrences;

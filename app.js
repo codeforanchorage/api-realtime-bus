@@ -1,3 +1,4 @@
+'use strict';
 
 var parse = require('co-body');
 var monk = require('monk');
