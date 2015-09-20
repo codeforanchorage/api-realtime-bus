@@ -1,7 +1,7 @@
 'use strict';
 
 // Muni XML Feed Parser
-var parser = require('./../parser');
+var parser = require('./../src/parser');
 var assert = require('assert');
 
 describe('Data Parser', function() {

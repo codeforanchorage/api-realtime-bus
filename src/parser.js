@@ -6,7 +6,7 @@ var q = require('q');
 var fs = require('fs');
 var parseString = require('xml2js').parseString;
 
-// Fetches all stops & depatures, return an Obj array
+// Fetches all stops & depatures, returns an Obj array
 function fetchStopsDepartures(liveFetch) {
   var options = {
     host: 'bustracker.muni.org',
@@ -15,7 +15,7 @@ function fetchStopsDepartures(liveFetch) {
     headers: { 'Cache-Control': 'no-cache' },
   };
   var d = q.defer();
-  var sd = __dirname + '/stopdepartures.xml';
+  var sd = __dirname + '/.tmp/stopdepartures.xml';
 
   if (fs.existsSync(sd) && !liveFetch) {
     // Grab a local file, parse results.
@@ -43,7 +43,7 @@ function fetchStopsDepartures(liveFetch) {
 
 };
 
-// Fetches all vehicle locations, return an Obj array
+// Fetches all vehicle locations, returns an Obj array
 function fetchVehicleLocations(liveFetch) {
   var options = {
     host: 'bustracker.muni.org',
@@ -52,7 +52,7 @@ function fetchVehicleLocations(liveFetch) {
     headers: { 'Cache-Control': 'no-cache' },
   };
   var d = q.defer();
-  var sd = __dirname + '/vehiclelocation.xml';
+  var sd = __dirname + '/.tmp/vehiclelocation.xml';
 
   if (fs.existsSync(sd) && !liveFetch) {
     // Grab a local file, parse results.
@@ -82,7 +82,7 @@ function fetchVehicleLocations(liveFetch) {
 
 function parseStops(data, d) {
   parseString(data, function(err, result) {
-    console.log('      Data From: ' + result.departures.generated[0]._);
+    console.log('      timestamp: ' + result.departures.generated[0]._);
     d.resolve({
       time: result.departures.generated[0]._,
       data: result,
@@ -92,7 +92,7 @@ function parseStops(data, d) {
 
 function parseVehicles(data, d) {
   parseString(data, function(err, result) {
-    console.log('      Data From: ' +
+    console.log('      timestamp: ' +
       result['vehicle-locations']['report-generated'][0]._);
     d.resolve({
       time: result['vehicle-locations']['report-generated'][0]._,

@@ -19,11 +19,10 @@ describe('GET', function() {
         done();
       });
   });
-
   it('can retrieve a binary from /gtfsmessage, decode it into a FeedMessage',
   function(done) {
     var http = require('http');
-    var transit = ProtoBuf.protoFromFile('./gtfs-realtime.proto')
+    var transit = ProtoBuf.protoFromFile('./gtfs/gtfs-realtime.proto')
         .build('transit_realtime');
     var options = {
       host: 'localhost',
@@ -60,11 +59,10 @@ describe('GET', function() {
         });
       };
   });
-
   it('can download a binary from /testmessage, and decode into Component',
   function(done) {
     var http = require('http');
-    var builder = ProtoBuf.loadProtoFile('./json.proto');
+    var builder = ProtoBuf.loadProtoFile('./gtfs/json.proto');
     var root = builder.build('js');
     var options = {
       host: 'localhost',
@@ -96,6 +94,5 @@ describe('GET', function() {
           done();
         });
       };
-
   });
 });

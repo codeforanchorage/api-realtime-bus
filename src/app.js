@@ -11,7 +11,7 @@ module.exports.getDefault = function * getDefault() {
 
 module.exports.getGTFSMessage = function * getGTFSMessage() {
   var transit = ProtoBuf
-  .protoFromFile('gtfs-realtime.proto')
+  .protoFromFile('./gtfs/gtfs-realtime.proto')
   .build('transit_realtime');
 
   // Create dependent objects
@@ -39,7 +39,7 @@ module.exports.getGTFSMessage = function * getGTFSMessage() {
 module.exports.getTestMessage = function * getFeed() {
 
   // Load test proto instance
-  var builder = ProtoBuf.loadProtoFile('./json.proto');
+  var builder = ProtoBuf.loadProtoFile('./gtfs/json.proto');
   var root = builder.build('js');
   var obj = new root.Component();
 

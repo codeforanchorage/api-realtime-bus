@@ -2,9 +2,9 @@ var koa = require('koa');
 var app = module.exports = koa();
 var routes = require('koa-route');
 var port = normalizePort(process.env.PORT || '3000');
-var routing = require('../app.js');
-var parser = require('../parser.js');
-var scheduler = require('../schedule.js'); // Start the Muni.org parser.
+var routing = require('./../src/app.js');
+var parser = require('./../src/parser.js');
+var scheduler = require('./../src/schedule.js'); // Start the Muni.org parser.
 
 // Schedule jobs to run against muni live data.
 // scheduler.schedulejob(parser.stopsdepartures);
