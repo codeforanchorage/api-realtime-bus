@@ -58,7 +58,7 @@ describe('ProtoBufJS (gtfs processing)', function() {
   });
 });
 
-describe('GTFS Files', function() {
+describe('csvtojson', function() {
   it('can read the routes.txt into JSON format', function(done) {
     repo.routes().then(function() {
       done();

@@ -58,7 +58,6 @@ function fetchVehicleLocations(liveFetch) {
     // Grab a local file, parse results.
     fs.readFile(sd, function(err, data) {
       if (err) { throw err; };
-      console.log('Grabbing static data!');
       parseVehicles(data, d);
     });
   } else {
