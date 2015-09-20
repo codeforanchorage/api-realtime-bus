@@ -18,7 +18,6 @@ describe.skip('Data Parser', function() {
             done(err);
           });
   });
-
   it('can grab Muni vehicles xml, and can filter active buses', function(done) {
     this.timeout(5000);
     repo.buses().then(function(buses) {
@@ -27,7 +26,6 @@ describe.skip('Data Parser', function() {
       done(err);
     });
   });
-
   it('can return all stops with delays in their departures', function(done) {
     this.timeout(5000);
     repo.delays().then(function(delays) {

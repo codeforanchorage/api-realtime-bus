@@ -32,35 +32,30 @@ describe('ProtoBufJS (gtfs processing)', function() {
 
   });
   it('can create a Trip Update from late departures', function(done) {
+    this.timeout(45000);
     // Grab a list of stop & departure delays.
     let delays = repo.delays().then(function(offset) {
-      var departures = offset;
-      departures.forEach(function(stp) {
-        // Departures with delays.
-        let dl = stp.departure
-          .filter(s => s.dev != '0');
-        // dl.forEach(st => logDep(st));
-      });
+      // var departures = offset;
+      // departures.forEach(function(stp) {
+      //   // Departures with delays.
+      //   let dl = stp.departure
+      //     .filter(s => s.dev != '0');
+      //   dl.forEach(st => logDep(st));
+      // });
     });
 
-    // Grab a full list of routes.
-    let routes = repo.routes().then(function(rts) {
-      // log(rts.filter(r => r.route_id == 75));
+    var trips = [];
+    repo.buses().then(function(buses) {
+      return repo.trips(buses);
+    }).then(function(active) { // Active Trip List
+      trips = active;
+      return repo.delays();
+    }).then(function(delayed) {
+      done();
     });
-
-    // Grab a full list of trips
-    let trips = repo.trips().then(function(schedule) {
-      // log(schedule.filter(r => r.route_id == 75));
-    });
-
-    // Grab a list of active buses.
-    let buses = repo.buses().then(function(active) {
-      // log(active.filter(b => b.speed != '0')); // Moving buses
-    });
-
-    // Grab live vehicle details (filter by trip_id)
 
     // Create a Trip Update object from live vehicle trip_ids
+    
 
   });
 });

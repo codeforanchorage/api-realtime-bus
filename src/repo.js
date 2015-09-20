@@ -5,30 +5,35 @@ var q = require('q');
 var fs = require('fs');
 var Converter = require('csvtojson').Converter;
 
-var liveData = false;
+var liveData = true;
+
+function log(msg) {
+  console.log(msg);
+}
 
 // Get departure delays
-function fetchStopAndDepartureDelays() {
+function fetchStopAndDepartureDelays() { // Active Trips
   var d = q.defer();
 
-  parser.stopsdepartures(liveData).then(function(result) {
-    let stops = Array.from(result.data.departures.stop);
-    // Stop delay filter.
-    function hasDelays(stop) {
-      // Grab stop's departures.
-      let departures = Array.from(stop.departure);
-      // Filter departures with late buses
-      return departures.filter(function(depart) {
-        return depart.dev != '0'; // Bus is Late.
-      }).length > 0;
-    }
-    let delays = stops.filter(hasDelays);
-    if (delays.length === 0) {
-      d.reject(Error('Stops were not filtered for delays'));
-    } else {
-      d.resolve(delays);
-    }
-  });
+  parser.stopsdepartures(liveData)
+    .then(function(result) {
+      let stops = Array.from(result.data.departures.stop);
+      // Stop delay filter.
+      function hasDelays(stop) {
+        // Grab stop's departures.
+        let departures = Array.from(stop.departure);
+        // Filter departures with late buses
+        return departures.filter(function(depart) {
+          return depart.dev != '0'; // Bus is Late.
+        }).length > 0;
+      }
+      let delays = stops.filter(hasDelays);
+      if (delays.length === 0) {
+        d.reject(Error('Stops were not filtered for delays'));
+      } else {
+        d.resolve(delays);
+      }
+    });
 
   return d.promise;
 
@@ -40,15 +45,15 @@ function fetchActiveBuses() {
 
   parser.vehiclelocations(liveData)
     .then(function(result) {
-    let buses = Array.from(result.data).filter(function(bus) {
-      return bus.tripid != 0;
+      let buses = Array.from(result.data).filter(function(bus) {
+        return bus.tripid != 0;
+      });
+      if (buses.length === 0) {
+        d.reject(Error('No active buses were returned'));
+      } else {
+        d.resolve(buses);
+      }
     });
-    if (buses.length === 0) {
-      d.reject(Error('No active buses were returned'));
-    } else {
-      d.resolve(buses);
-    }
-  });
 
   return d.promise;
 }
@@ -69,15 +74,26 @@ function fetchRoutes() {
 
 }
 
-// Get list of routes
-function fetchTrips() {
+// Get list of route with active buses
+function fetchTrips(buses) {
   var d = q.defer();
-
   var rfs = fs.createReadStream('./gtfs/trips.txt');
   var converter = new Converter({ constructResult: true });
-  converter.on('end_parsed', function(jsonObj) {
-    d.resolve(jsonObj);
+  converter.on('end_parsed', function(jsonTrips) {
+    let tl = [];
+    if (buses != undefined) {
+      buses.forEach(b => tl.push(getTrips(b.routeid, b.tripid)));
+      d.resolve(tl);
+    };
+    function getTrips(route, tripid) {
+      var trips = jsonTrips
+      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+        .filter(t => t.route_id = route)
+        .filter(t => t.trip_id.toString().indexOf(tripid + '-') > 0);
+      return trips;
+    }
   });
+
   // Read from file
   rfs.pipe(converter);
 

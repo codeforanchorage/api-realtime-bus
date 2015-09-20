@@ -82,7 +82,7 @@ function fetchVehicleLocations(liveFetch) {
 
 function parseStops(data, d) {
   parseString(data, function(err, result) {
-    console.log('      timestamp: ' + result.departures.generated[0]._);
+    console.log('      Stops: ' + result.departures.generated[0]._);
     d.resolve({
       time: result.departures.generated[0]._,
       data: result,
@@ -92,7 +92,7 @@ function parseStops(data, d) {
 
 function parseVehicles(data, d) {
   parseString(data, function(err, result) {
-    console.log('      timestamp: ' +
+    console.log('  Locations: ' +
       result['vehicle-locations']['report-generated'][0]._);
     d.resolve({
       time: result['vehicle-locations']['report-generated'][0]._,
