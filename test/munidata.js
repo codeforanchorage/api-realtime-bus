@@ -5,7 +5,7 @@ var parser = require('./../src/parser');
 var assert = require('assert');
 var repo = require('./../src/repo');
 
-describe('Data Parser', function() {
+describe.skip('Data Parser', function() {
   it('can grab Muni routes and departures xml, and can serialize it',
   function(done) {
     this.timeout(5000);
