@@ -19,9 +19,7 @@ describe('GET', function() {
         done();
       });
   });
-});
 
-describe('GET', function() {
   it('can retrieve a binary from /gtfsmessage, decode it into a FeedMessage',
   function(done) {
     var http = require('http');
@@ -62,9 +60,7 @@ describe('GET', function() {
         });
       };
   });
-});
 
-describe('GET', function() {
   it('can download a binary from /testmessage, and decode into Component',
   function(done) {
     var http = require('http');

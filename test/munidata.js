@@ -16,10 +16,23 @@ describe('Data Parser', function() {
             done();
           });
   });
-});
 
-describe('Data Parser', function() {
-  it('can return all stops with delays', function(done) {
+  it('can grab Muni vehicles xml, and can filter active buses', function(done) {
+    this.timeout(5000);
+    parser.vehiclelocations(false) // Live Fetch?
+      .then(function(result) {
+      let buses = Array.from(result.data).filter(function(bus) {
+        return bus.tripid != 0;
+      });
+      if (buses.length === 0) {
+        done(Error('Vehicles were not filtered for active tripid'));
+      } else {
+        done();
+      }
+    });
+  });
+
+  it('can return all stops with delays in their departures', function(done) {
     this.timeout(5000);
 
     // Promise out xml conversion.

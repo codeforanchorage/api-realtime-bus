@@ -21,9 +21,7 @@ describe('ProtoBufJS (.proto processing)', function() {
       'Expected start value of 1 in TimeRange instance.');
 
   });
-});
 
-describe('ProtoBufJS (.proto processing)', function() {
   it('can create an encoded FeedMessage GTFS object', function(done) {
     var transit = ProtoBuf.protoFromFile('./gtfs-realtime.proto')
         .build('transit_realtime');

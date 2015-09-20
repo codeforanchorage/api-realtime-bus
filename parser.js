@@ -21,13 +21,7 @@ function fetchStopsDepartures(liveFetch) {
     // Grab a local file, parse results.
     fs.readFile(sd, function(err, data) {
       if (err) { throw err; };
-      parseString(data, function(err, result) {
-        console.log('      Static data: ' + result.departures.generated[0]._);
-        d.resolve({
-          time: result.departures.generated[0]._,
-          data: result,
-        });
-      });
+      parseStops(data, d);
     });
   } else {
     // Grab feed, parse results.
@@ -39,15 +33,8 @@ function fetchStopsDepartures(liveFetch) {
       res.on('data', function(chunk) {
         data = data + chunk;
       });
-
       res.on('end', function() {
-        parseString(data, function(err, result) {
-          console.log('      Live data: ' + result.departures.generated[0]._);
-          d.resolve({
-            time: result.departures.generated[0]._,
-            data: result,
-          });
-        });
+        parseStops(data, d);
       });
     };
   }
@@ -56,4 +43,63 @@ function fetchStopsDepartures(liveFetch) {
 
 };
 
+// Fetches all vehicle locations, return an Obj array
+function fetchVehicleLocations(liveFetch) {
+  var options = {
+    host: 'bustracker.muni.org',
+    path: '/InfoPoint/XML/vehiclelocation.xml',
+    agent: false,
+    headers: { 'Cache-Control': 'no-cache' },
+  };
+  var d = q.defer();
+  var sd = __dirname + '/vehiclelocation.xml';
+
+  if (fs.existsSync(sd) && !liveFetch) {
+    // Grab a local file, parse results.
+    fs.readFile(sd, function(err, data) {
+      if (err) { throw err; };
+      parseVehicles(data, d);
+    });
+  } else {
+    // Grab feed, parse results.
+    http.get(options, parse);
+
+    // Process the feed
+    function parse(res) {
+      var data = '';
+      res.on('data', function(chunk) {
+        data = data + chunk;
+      });
+      res.on('end', function() {
+        parseVehicles(data, d);
+      });
+    };
+  }
+
+  return d.promise;
+
+};
+
+function parseStops(data, d) {
+  parseString(data, function(err, result) {
+    console.log('      Data From: ' + result.departures.generated[0]._);
+    d.resolve({
+      time: result.departures.generated[0]._,
+      data: result,
+    });
+  });
+};
+
+function parseVehicles(data, d) {
+  parseString(data, function(err, result) {
+    console.log('      Data From: ' +
+      result['vehicle-locations']['report-generated'][0]._);
+    d.resolve({
+      time: result['vehicle-locations']['report-generated'][0]._,
+      data: result['vehicle-locations'].vehicle,
+    });
+  });
+};
+
 module.exports.stopsdepartures = fetchStopsDepartures;
+module.exports.vehiclelocations = fetchVehicleLocations;
