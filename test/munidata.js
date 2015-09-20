@@ -21,7 +21,7 @@ describe('Data Parser', function() {
 
   it('can grab Muni vehicles xml, and can filter active buses', function(done) {
     this.timeout(5000);
-    repo.activebuses().then(function(buses) {
+    repo.buses().then(function(buses) {
       done();
     }).fail(function(err) {
       done(err);

@@ -9,7 +9,7 @@ var parseString = require('xml2js').parseString;
 var app = require('./../bin/www.js');
 var request = require('supertest').agent(app.listen(3001));
 
-describe('GET', function() {
+describe.skip('GET', function() {
   it('can retrieve a root web response', function(done) {
     request
       .get('/')

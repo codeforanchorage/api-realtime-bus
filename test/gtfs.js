@@ -46,14 +46,29 @@ describe('ProtoBufJS (gtfs processing)', function() {
     }
   });
   it('can create a Trip Update from late departures', function(done) {
-    // Grab a list of late bus routes (return route list).
+    // Grab a list of stop & departure delays.
+    let delays = repo.delays().then(function(offset) {
+      console.log(offset);
+    });
 
-    // Grab a list of trips for routes affected
+    // Grab a full list of routes.
+    let routes = repo.routes().then(function(routes) {
+      // console.log(routes);
+    });
+
+    // Grab a full list of trips
+    let trips = repo.trips().then(function(schedule) {
+      // console.log(schedule);
+    });
+
+    // Grab a list of active buses.
+    let buses = repo.buses().then(function(active) {
+      // console.log(active);
+    });
 
     // Grab live vehicle details (filter by trip_id)
 
     // Create a Trip Update object from live vehicle trip_ids
-
     done();
   });
 });
@@ -61,6 +76,16 @@ describe('ProtoBufJS (gtfs processing)', function() {
 describe('csvtojson', function() {
   it('can read the routes.txt into JSON format', function(done) {
     repo.routes().then(function() {
+      done();
+    }).fail(function(err) {
+      done(err);
+    });
+  });
+});
+
+describe('csvtojson', function() {
+  it('can read the trips.txt into JSON format', function(done) {
+    repo.trips().then(function() {
       done();
     }).fail(function(err) {
       done(err);

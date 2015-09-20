@@ -8,7 +8,7 @@ var Converter = require('csvtojson').Converter;
 var liveData = false;
 
 // Get departure delays
-module.exports.delays = function() {
+function fetchStopAndDepartureDelays() {
   var d = q.defer();
 
   parser.stopsdepartures(liveData).then(function(result) {
@@ -35,7 +35,7 @@ module.exports.delays = function() {
 };
 
 // Get active bus list. (tripid list)
-module.exports.activebuses = function() {
+function fetchActiveBuses() {
   var d = q.defer();
 
   parser.vehiclelocations(liveData)
@@ -43,7 +43,6 @@ module.exports.activebuses = function() {
     let buses = Array.from(result.data).filter(function(bus) {
       return bus.tripid != 0;
     });
-
     if (buses.length === 0) {
       d.reject(Error('No active buses were returned'));
     } else {
@@ -55,7 +54,7 @@ module.exports.activebuses = function() {
 }
 
 // Get list of routes
-module.exports.routes = function() {
+function fetchRoutes() {
   var d = q.defer();
 
   var rfs = fs.createReadStream('./gtfs/routes.txt');
@@ -69,3 +68,24 @@ module.exports.routes = function() {
   return d.promise;
 
 }
+
+// Get list of routes
+function fetchTrips() {
+  var d = q.defer();
+
+  var rfs = fs.createReadStream('./gtfs/trips.txt');
+  var converter = new Converter({ constructResult: true });
+  converter.on('end_parsed', function(jsonObj) {
+    d.resolve(jsonObj);
+  });
+  // Read from file
+  rfs.pipe(converter);
+
+  return d.promise;
+
+}
+
+module.exports.delays = fetchStopAndDepartureDelays;
+module.exports.buses = fetchActiveBuses
+module.exports.routes = fetchRoutes;
+module.exports.trips = fetchTrips;
