@@ -1,14 +1,14 @@
 'use strict';
 
 var later = require('later');
-var activebuses;
-var occurrences;
+var active;
 
+// Schedule a job with an active bus schedule
 module.exports.schedulejob = function(job) {
 
   later.date.localTime(); // Set local clock time
 
-  activebuses = { schedules: [
+  active = { schedules: [
   { dw: [2,3,4,5,6], // M-F
   h: [6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],
   m: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,
@@ -26,15 +26,6 @@ module.exports.schedulejob = function(job) {
   46,47,48,49,50,51,52,53,54,55,56,57,58,59,],},],
   exceptions: [],};  // TODO - Add holiday and closure dates
 
-  function listSchedule() {
-    occurrences = later.schedule(daily).next(15);
-
-    for (var i = 0; i < 15; i++) {
-      console.log(occurrences[i]);
-    }
-  }
-
-  // Execute logTime for each occurrence of the text schedule
-  return later.setInterval(job, activebuses);
+  return later.setInterval(job, active);
 
 };

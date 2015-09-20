@@ -15,7 +15,7 @@ function fetchStopsDepartures(liveFetch) {
     headers: { 'Cache-Control': 'no-cache' },
   };
   var d = q.defer();
-  var sd = __dirname + '/.tmp/stopdepartures.xml';
+  var sd = './.tmp/stopdepartures.xml';
 
   if (fs.existsSync(sd) && !liveFetch) {
     // Grab a local file, parse results.
@@ -52,12 +52,13 @@ function fetchVehicleLocations(liveFetch) {
     headers: { 'Cache-Control': 'no-cache' },
   };
   var d = q.defer();
-  var sd = __dirname + '/.tmp/vehiclelocation.xml';
+  var sd = './.tmp/vehiclelocation.xml';
 
   if (fs.existsSync(sd) && !liveFetch) {
     // Grab a local file, parse results.
     fs.readFile(sd, function(err, data) {
       if (err) { throw err; };
+      console.log('Grabbing static data!');
       parseVehicles(data, d);
     });
   } else {

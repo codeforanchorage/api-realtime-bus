@@ -2,10 +2,9 @@
 
 var ProtoBuf = require('protobufjs');
 var assert = require('assert');
-var fs = require('fs');
-var Converter = require('csvtojson').Converter;
+var repo = require('./../src/repo');
 
-describe('ProtoBufJS (.proto gtfs processing)', function() {
+describe('ProtoBufJS (gtfs processing)', function() {
   it('can encode and decode a TimeRange GTFS object', function() {
 
     // Load test proto instance.
@@ -46,18 +45,25 @@ describe('ProtoBufJS (.proto gtfs processing)', function() {
       done(ex);
     }
   });
+  it('can create a Trip Update from late departures', function(done) {
+    // Grab a list of late bus routes (return route list).
+
+    // Grab a list of trips for routes affected
+
+    // Grab live vehicle details (filter by trip_id)
+
+    // Create a Trip Update object from live vehicle trip_ids
+
+    done();
+  });
 });
 
 describe('GTFS Files', function() {
   it('can read the routes.txt into JSON format', function(done) {
-    var rfs = fs.createReadStream('./gtfs/routes.txt');
-    var converter = new Converter({ constructResult: true });
-    converter.on('end_parsed', function(jsonObj) {
-      assert.ok(jsonObj);
+    repo.routes().then(function() {
       done();
-      // Console.log(jsonObj); // Here is your result json object
+    }).fail(function(err) {
+      done(err);
     });
-    // Read from file
-    rfs.pipe(converter);
   });
 });
