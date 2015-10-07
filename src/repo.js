@@ -17,7 +17,7 @@ function fetchStopAndDepartureDelays() { // Active Trips
 
   parser.stopsdepartures(liveData)
     .then(function(result) {
-      let stops = Array.from(result.data.departures.stop);
+      let stops = result.data.departures.stop;
       // Stop delay filter.
       function hasDelays(stop) {
         // Grab stop's departures.
@@ -79,19 +79,47 @@ function fetchTrips(buses) {
   var d = q.defer();
   var rfs = fs.createReadStream('./gtfs/trips.txt');
   var converter = new Converter({ constructResult: true });
-  converter.on('end_parsed', function(jsonTrips) {
-    let tl = [];
+  converter.on('end_parsed', function(trips) {
     if (buses != undefined) {
-      buses.forEach(b => tl.push(getTrips(b.routeid, b.tripid)));
-      d.resolve(tl);
+
+      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+      log('$------ [ Routes ] ------$');
+      log(trips.filter(t => t.route_id == 13));
+
+      log('$------ [ Buses ] ------$');
+      log(buses.filter(b => b.routeid == '13'));
+
+      log('$------ [ Active Routes ] ------$');
+      //log(trips);
+
+      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+      // bl = bl.filter(b => b.route_id == 13);
+      // console.log('$------ [ Routes ] ------$');
+      // log(bl);
+      //console.log('$-------------$');
+      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+      //log(bl.filter(t => t.route_id == '75').length);
+      //log(bl.filter(t => t.route_id == 75 && t.trip_id.toString()
+      //  .includes('155')).length);
+      //log(bl.filter(t => t.route_id == '75').length);
+
+      //var trips = jsonTrips.filter(s => s.route_id == '75');
+      //log(trips.filter(s => s.trip_id.toString().includes('155-') > -1));
+
+      //log(buses.filter(b => b.routeid == 75));
+      // Buses.forEach(b => {tl.push(getTrips(b.routeid, b.tripid))});
+      d.resolve([]);
     };
     function getTrips(route, tripid) {
-      var trips = jsonTrips
+
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-        .filter(t => t.route_id = route)
-        .filter(t => t.trip_id.toString().indexOf(tripid + '-') > 0);
-      return trips;
-    }
+      // log(jsonTrips.filter(t => t.route_id == route.length);
+
+      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+      return jsonTrips
+        .filter(t => t.route_id == route)
+        .filter(t => t.trip_id.toString().indexOf(tripid + '-') > -1);
+    };
   });
 
   // Read from file

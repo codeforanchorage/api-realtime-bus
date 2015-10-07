@@ -32,9 +32,9 @@ describe('ProtoBufJS (gtfs processing)', function() {
 
   });
   it('can create a Trip Update from late departures', function(done) {
-    this.timeout(45000);
+    this.timeout(15000);
     // Grab a list of stop & departure delays.
-    let delays = repo.delays().then(function(offset) {
+    //let delays = repo.delays().then(function(offset) {
       // var departures = offset;
       // departures.forEach(function(stp) {
       //   // Departures with delays.
@@ -42,7 +42,7 @@ describe('ProtoBufJS (gtfs processing)', function() {
       //     .filter(s => s.dev != '0');
       //   dl.forEach(st => logDep(st));
       // });
-    });
+    //});
 
     var trips = [];
     repo.buses().then(function(buses) {
@@ -51,12 +51,10 @@ describe('ProtoBufJS (gtfs processing)', function() {
       trips = active;
       return repo.delays();
     }).then(function(delayed) {
+      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+      // log(delayed.forEach(t => log(t)));
       done();
     });
-
-    // Create a Trip Update object from live vehicle trip_ids
-    
-
   });
 });
 
