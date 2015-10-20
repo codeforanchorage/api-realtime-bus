@@ -7,3 +7,5 @@ The goal is to use XML from Infopoint and copy it to a a server once a minute. T
 The realtime ETAs comes from [here.](http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml)
 
 The goal would be to have it up and working before Snow City gives away free coffee for there being an inch of snow that sticks in Anchorage this year.
+
+An example of the trip feed is [Here](https://developers.google.com/transit/gtfs-realtime/examples/).
