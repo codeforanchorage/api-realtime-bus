@@ -1,3 +1,5 @@
+#' @get /delays
+trip_update <- function(all) {
 load("stops.rda")
 library(lubridate)
 library(dplyr)
@@ -6,7 +8,7 @@ library(lubridate)
 library(tidyr)
 library(stringr)
 library(jsonlite)
-library(RProtoBuf)
+#library(RProtoBuf)
 
 stops <- read.csv("gtfs/stop_times.txt", stringsAsFactors = FALSE)
 stops$departure_time <- as.numeric(gsub(":", "", gsub("00", "", stops$departure_time)))
@@ -39,7 +41,6 @@ delays$stop_time <- as.numeric(gsub(":","", delays$stop_time))
 #just use weekday service id for now
 stops <- stops %>% filter(service_id == 1)
 
-
 combined_data <- inner_join(delays, stops, by = c("routeID", "direction", "stop_time"))
            
 data_for_protobuf <- combined_data %>% select(trip_id, sequence, dev)
@@ -55,14 +56,12 @@ protobuf_list <- vector(mode = "list", length = length(current_trips) + 1)
 
 for(i in 2:(length(current_trips) + 1) ) {
 
-trip_info <- list(trip_id = "1-630-I-1",
-                  stop_time_update = list(stop_sequence = 15,
-                                          arrival = 60),
-                  stop_time_update = list(stop_sequence = 16,
-                                          arrival = 60
-                  ))
+trip_info <- list(trip_id = data_for_protobuf$trip_id[i],
+                  stop_time_update = list(stop_sequence = data_for_protobuf$sequence[i],
+                                          arrival = data_for_protobuf$dev[i])
+                  )
 
-protobuf_list[i] <- list(entity = list(id = "something",
+protobuf_list[i] <- list(entity = list(id = "entity-spacer",
                          trip = trip_info))
 
 }
@@ -72,5 +71,4 @@ protobuf_list[1] <- list(header = list(gtfs_realtime_version = "1.0",
                    timestamp = as.numeric(as.POSIXlt(Sys.time(), "AKST")) ))
      
 toJSON(protobuf_list, pretty = TRUE, auto_unbox = TRUE)
-
-
+}
