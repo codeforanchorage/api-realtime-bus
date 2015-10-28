@@ -59,7 +59,7 @@ data_for_protobuf %>% arrange(trip_id, sequence)
 
 for(i in 2:(length(current_trips) + 1) ) {
 
-  deviation <- data_for_protobuf %>% filter(trip_id == current_trips[1]) 
+  deviation <- data_for_protobuf %>% filter(trip_id == current_trips[i]) 
   
 trip_info <- list(trip_id = as.character(deviation$trip_id[1]),
                   stop_time_update = list(stop_sequence = deviation$sequence[1],
