@@ -9,8 +9,8 @@ library(stringr)
 library(jsonlite)
 #library(RProtoBuf)
 
-stops <- read.csv("/home/hans/api-realtime-bus/R/gtfs/stop_times.txt", stringsAsFactors = FALSE)
-stops <- read.csv("gtfs/stop_times.txt", stringsAsFactors = FALSE)
+#stops <- read.csv("/home/hans/api-realtime-bus/R/gtfs/stop_times.txt", stringsAsFactors = FALSE)
+#stops <- read.csv("gtfs/stop_times.txt", stringsAsFactors = FALSE)
 stops$departure_time <- as.numeric(gsub(":", "", gsub("00", "", stops$departure_time)))
 stops <-cbind(as.data.frame(str_split_fixed(stops$trip_id, "-", 4),
                                stringsAsFactors = FALSE), 
@@ -59,7 +59,7 @@ data_for_protobuf %>% arrange(trip_id, sequence)
 
 for(i in 2:(length(current_trips) + 1) ) {
 
-  deviation <- data_for_protobuf %>% filter(trip_id == current_trips[i]) 
+  deviation <- data_for_protobuf %>% filter(trip_id == current_trips[i-1]) 
   
 trip_info <- list(trip_id = as.character(deviation$trip_id[1]),
                   stop_time_update = list(stop_sequence = deviation$sequence[1],
