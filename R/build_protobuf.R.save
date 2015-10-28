@@ -1,6 +1,6 @@
-#' @get /test
-purely_symbolic <- function() {
-load("/home/hans/api-realtime-bus/R/stops.rda")
+#' @get /delays
+trip_update <- function(all) {
+load("stops.rda")
 library(lubridate)
 library(dplyr)
 library(XML)
@@ -10,7 +10,6 @@ library(stringr)
 library(jsonlite)
 #library(RProtoBuf)
 
-stops <- read.csv("/home/hans/api-realtime-bus/R/gtfs/stop_times.txt", stringsAsFactors = FALSE)
 stops$departure_time <- as.numeric(gsub(":", "", gsub("00", "", stops$departure_time)))
 stops <-cbind(as.data.frame(str_split_fixed(stops$trip_id, "-", 4),
                                stringsAsFactors = FALSE), 
@@ -70,6 +69,5 @@ protobuf_list[1] <- list(header = list(gtfs_realtime_version = "1.0",
                    incrementalitiy = "FULL_DATASET",
                    timestamp = as.numeric(as.POSIXlt(Sys.time(), "AKST")) ))
      
-protobuf_list
-#paste("Hello World")
+toJSON(protobuf_list, pretty = TRUE, auto_unbox = TRUE)
 }
