@@ -1,6 +1,5 @@
 #' @get /test
 purely_symbolic <- function() {
-load("/home/hans/api-realtime-bus/R/stops.rda")
 library(lubridate)
 library(dplyr)
 library(XML)
@@ -11,6 +10,7 @@ library(jsonlite)
 #library(RProtoBuf)
 
 stops <- read.csv("/home/hans/api-realtime-bus/R/gtfs/stop_times.txt", stringsAsFactors = FALSE)
+stops <- read.csv("gtfs/stop_times.txt", stringsAsFactors = FALSE)
 stops$departure_time <- as.numeric(gsub(":", "", gsub("00", "", stops$departure_time)))
 stops <-cbind(as.data.frame(str_split_fixed(stops$trip_id, "-", 4),
                                stringsAsFactors = FALSE), 
@@ -53,12 +53,17 @@ current_trips <- unique(as.character(data_for_protobuf$trip_id))
 
 protobuf_list <- vector(mode = "list", length = length(current_trips) + 1)
 
+data_for_protobuf %>% arrange(trip_id, sequence)
+
+
 
 for(i in 2:(length(current_trips) + 1) ) {
 
-trip_info <- list(trip_id = data_for_protobuf$trip_id[i],
-                  stop_time_update = list(stop_sequence = data_for_protobuf$sequence[i],
-                                          arrival = data_for_protobuf$dev[i])
+  deviation <- data_for_protobuf %>% filter(trip_id == current_trips[1]) 
+  
+trip_info <- list(trip_id = as.character(deviation$trip_id[1]),
+                  stop_time_update = list(stop_sequence = deviation$sequence[1],
+                                          arrival = as.numeric(deviation$dev[1]))
                   )
 
 protobuf_list[i] <- list(entity = list(id = "entity-spacer",
