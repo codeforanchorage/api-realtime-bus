@@ -1,5 +1,18 @@
 # Muni bus feeds.
 
+// Route Format
+[route id]-[start time]-[direction (I/O)]-[service id]
+
+Calendar.txt CalendarDates.txt (service_ID is overwritten) - Overwritten on Dec
+24th.  Needed to avoid collisions for weekend vs. weekday runs.
+
+// What is the Service ID?
+// Calendar Date related
+// Direction (Inbound / Outbound)?
+
+Will google be able to make a source out of a non-muni.org domain?
+- Research
+
 http://bustracker.muni.org/InfoPoint/XML/vehiclelocation.xml
 http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml
 http://bustracker.muni.org/InfoPoint/XML/publicmessages.xml

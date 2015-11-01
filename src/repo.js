@@ -29,7 +29,7 @@ function fetchStopAndDepartureDelays() { // Active Trips
       }
       let delays = stops.filter(hasDelays);
       if (delays.length === 0) {
-        d.reject(Error('Stops were not filtered for delays'));
+        d.reject(Error('Stops were not filtered for delays!'));
       } else {
         d.resolve(delays);
       }
@@ -83,32 +83,14 @@ function fetchTrips(buses) {
     if (buses != undefined) {
 
       // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-      log('$------ [ Routes ] ------$');
-      log(trips.filter(t => t.route_id == 13));
+      // log('$------ [ Routes ] ------$');
+      // log(trips.filter(t => t.route_id == 7));
+      // log('$------ [ Buses ] ------$');
+      // log(buses.filter(b => b.routeid == '7'));
+      // log('$------ [ Active Routes ] ------$');
 
-      log('$------ [ Buses ] ------$');
-      log(buses.filter(b => b.routeid == '13'));
-
-      log('$------ [ Active Routes ] ------$');
-      //log(trips);
-
-      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-      // bl = bl.filter(b => b.route_id == 13);
-      // console.log('$------ [ Routes ] ------$');
-      // log(bl);
-      //console.log('$-------------$');
-      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-      //log(bl.filter(t => t.route_id == '75').length);
-      //log(bl.filter(t => t.route_id == 75 && t.trip_id.toString()
-      //  .includes('155')).length);
-      //log(bl.filter(t => t.route_id == '75').length);
-
-      //var trips = jsonTrips.filter(s => s.route_id == '75');
-      //log(trips.filter(s => s.trip_id.toString().includes('155-') > -1));
-
-      //log(buses.filter(b => b.routeid == 75));
-      // Buses.forEach(b => {tl.push(getTrips(b.routeid, b.tripid))});
       d.resolve([]);
+
     };
     function getTrips(route, tripid) {
 

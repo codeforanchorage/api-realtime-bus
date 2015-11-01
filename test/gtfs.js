@@ -14,7 +14,7 @@ function logDep(dep) {
 }
 
 describe('ProtoBufJS (gtfs processing)', function() {
-  it.skip('can encode and decode a TimeRange GTFS object', function() {
+  it('can encode and decode a TimeRange GTFS object', function() {
 
     // Load test proto instance.
     var builder = ProtoBuf.loadProtoFile('./gtfs/gtfs-realtime.proto');
@@ -31,18 +31,19 @@ describe('ProtoBufJS (gtfs processing)', function() {
       'Expected start value of 1 in TimeRange instance');
 
   });
-  it('can create a Trip Update from late departures', function(done) {
+  it('can create a Trip Update from late bus departures', function(done) {
     this.timeout(15000);
     // Grab a list of stop & departure delays.
-    //let delays = repo.delays().then(function(offset) {
-      // var departures = offset;
-      // departures.forEach(function(stp) {
-      //   // Departures with delays.
-      //   let dl = stp.departure
-      //     .filter(s => s.dev != '0');
-      //   dl.forEach(st => logDep(st));
-      // });
-    //});
+
+    // Let delays = repo.delays().then(function(offset) {
+    // var departures = offset;
+    // departures.forEach(function(stp) {
+    //   // Departures with delays.
+    //   let dl = stp.departure
+    //     .filter(s => s.dev != '0');
+    //   dl.forEach(st => logDep(st));
+    // });
+    // });
 
     var trips = [];
     repo.buses().then(function(buses) {
@@ -58,7 +59,7 @@ describe('ProtoBufJS (gtfs processing)', function() {
   });
 });
 
-describe.skip('csvtojson', function() {
+describe('csvtojson', function() {
   it('can read the routes.txt into JSON format', function(done) {
     repo.routes().then(function() {
       done();
