@@ -1,0 +1,98 @@
+syntax = "proto2";
+option java_package = "com.google.transit.realtime";
+package transit_realtime;
+message FeedMessage {
+  required FeedHeader header = 1;
+  repeated FeedEntity entity = 2;
+  extensions 1000 to 1999;
+}
+message FeedHeader {
+  required string gtfs_realtime_version = 1;
+  enum Incrementality {
+    FULL_DATASET = 0;
+    DIFFERENTIAL = 1;
+  }
+  optional Incrementality incrementality = 2 [default = FULL_DATASET];
+  optional uint64 timestamp = 3;
+}
+message FeedEntity {
+  required string id = 1;
+  optional bool is_deleted = 2 [default = false];
+  optional TripUpdate trip_update = 3;
+  optional VehiclePosition vehicle = 4;
+}
+message TripUpdate {
+  required TripDescriptor trip = 1;
+  optional VehicleDescriptor vehicle = 3;
+  message StopTimeEvent {
+    optional int32 delay = 1;
+    optional int64 time = 2;
+    optional int32 uncertainty = 3;
+  }
+  message StopTimeUpdate {
+    optional uint32 stop_sequence = 1;
+    optional string stop_id = 4;
+    optional StopTimeEvent arrival = 2;
+    optional StopTimeEvent departure = 3;
+    enum ScheduleRelationship {
+      SCHEDULED = 0;
+      SKIPPED = 1;
+      NO_DATA = 2;
+    }
+    optional ScheduleRelationship schedule_relationship = 5
+        [default = SCHEDULED];
+    extensions 1000 to 1999;
+  }
+  repeated StopTimeUpdate stop_time_update = 2;
+  optional uint64 timestamp = 4;
+  optional int32 delay = 5;
+}
+message VehiclePosition {
+  optional TripDescriptor trip = 1;
+  optional VehicleDescriptor vehicle = 8;
+  optional Position position = 2;
+  optional uint32 current_stop_sequence = 3;
+  optional string stop_id = 7;
+  enum VehicleStopStatus {
+    INCOMING_AT = 0;
+    STOPPED_AT = 1;
+    IN_TRANSIT_TO = 2;
+  }
+  optional VehicleStopStatus current_status = 4 [default = IN_TRANSIT_TO];
+  optional uint64 timestamp = 5;
+  enum CongestionLevel {
+    UNKNOWN_CONGESTION_LEVEL = 0;
+    RUNNING_SMOOTHLY = 1;
+    STOP_AND_GO = 2;
+    CONGESTION = 3;
+    SEVERE_CONGESTION = 4;  // People leaving their cars.
+  }
+}
+message TripDescriptor {
+  optional string trip_id = 1;
+  optional string route_id = 5;
+  optional uint32 direction_id = 6;
+  optional string start_time = 2;
+  optional string start_date = 3;
+  enum ScheduleRelationship {
+    SCHEDULED = 0;
+    ADDED = 1;
+    UNSCHEDULED = 2;
+    CANCELED = 3;
+  }
+  optional ScheduleRelationship schedule_relationship = 4;
+}
+message VehicleDescriptor {
+  optional string id = 1;
+  optional string label = 2;
+  optional string license_plate = 3;
+  extensions 1000 to 1999;
+}
+message EntitySelector {
+  optional string agency_id = 1;
+  optional string route_id = 2;
+  optional int32 route_type = 3;
+  optional TripDescriptor trip = 4;
+  optional string stop_id = 5;
+  extensions 1000 to 1999;
+}

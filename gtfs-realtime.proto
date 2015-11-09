@@ -638,7 +638,3 @@ message TranslatedString {
   // modifications to the spec.
   extensions 1000 to 1999;
 }
-
-service EchoService {
-  rpc Echo (FeedMessage) returns (FeedMessage);
-}
