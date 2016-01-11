@@ -67,7 +67,7 @@ combined_data <- inner_join(delays, stops, by = c("routeID", "sdt" = "stop_time"
            
 data_for_protobuf <- data_for_protobuf <- combined_data
 
-current_trips <- combined_data$trip_id
+current_trips <- unique(combined_data$trip_id)
 
 protobuf_list <- vector(mode = "list", length = length(current_trips))
 
