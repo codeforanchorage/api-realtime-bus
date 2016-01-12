@@ -22,8 +22,8 @@ stops$id  <- as.character(stops$id)
 stops$service_id  <- as.numeric(stops$service_id)
 
 #get delay infomation
-stop_departures <- xmlToList(xmlParse(paste0(base_dir, "api-realtime-bus/stopdepartures.xml")))
-#stop_departures <- xmlToList(xmlParse("http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml")) 
+#stop_departures <- xmlToList(xmlParse(paste0(base_dir, "api-realtime-bus/stopdepartures.xml")))
+stop_departures <- xmlToList(xmlParse("http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml")) 
 
 #use this function for parsing 
 removenulls <- function(x) {ifelse(is.null(x), NA, x)}
@@ -52,8 +52,7 @@ delays <- data.frame(
   service_id = service_id,
   stringsAsFactors = FALSE)
 
-
-delays %>% filter(stop_time != "Done")
+#delays %>% filter(stop_time != "Done") %>% arrange(routeID, direction, sdt)
 
 combined_data <- inner_join(delays, stops, by = c("routeID", "sdt" = "stop_time", "direction", "service_id")) %>% 
   select(trip_id, dev, sequence, text) %>% 
@@ -62,8 +61,12 @@ combined_data <- inner_join(delays, stops, by = c("routeID", "sdt" = "stop_time"
   group_by(trip_id, dev, text) %>% 
   mutate(foo = min(sequence)) %>%
   filter(foo == sequence) %>%
-  unique() %>% select(-foo)
+  unique() %>% select(-foo) %>% 
+  #remove artifacts from 7J/7A
+  group_by(trip_id, sequence) %>% filter(row_number(text) == 1) 
 
+
+combined_data %>% group_by(trip_id, sequence) %>% filter(row_number(text) == 1) 
            
 data_for_protobuf <- data_for_protobuf <- combined_data
 
@@ -73,7 +76,7 @@ protobuf_list <- vector(mode = "list", length = length(current_trips))
 
 for(i in 1:length(current_trips)) {
   
-   deviation <- data_for_protobuf %>% filter(trip_id == current_trips[i]) 
+   deviation <- data_for_protobuf %>% filter(trip_id == "8-1417-I-1") %>% arrange(sequence)
    stop_time_update_list <- vector(mode = "list", length = dim(deviation)[1])
    
   for(j in 1:dim(deviation)[1]) { 
@@ -83,7 +86,6 @@ for(i in 1:length(current_trips)) {
   stop_sequence_number <- deviation$sequence[j]
   trip_id <- as.character(deviation$trip_id[j])
   
-    
   stop_time_update_object <- new(transit_realtime.TripUpdate.StopTimeUpdate,
                                  stop_sequence = stop_sequence_number,
                                  arrival = new(transit_realtime.TripUpdate.StopTimeEvent,
