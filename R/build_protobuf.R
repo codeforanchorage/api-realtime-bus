@@ -1,44 +1,50 @@
+#use this function for parsing 
+removenulls <- function(x) {ifelse(is.null(x), NA, x)}
 library(lubridate)
 library(dplyr)
 library(XML)
 library(stringr)
 library(RProtoBuf)
 
+#base_dir <- "/home/ubuntu/api-realtime-bus/"
 base_dir <- "/home/ht/Desktop/git/api-realtime-bus/"
 
+#get delay infomation
+#stop_departures <- xmlToList(xmlParse(paste0(base_dir, "api-realtime-bus/stopdepartures.xml")))
+stop_departures <- xmlToList(xmlParse("http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml")) 
+
+#directory to write to 
+#write_dir <- "/usr/share/nginx/html/"
+write_dir <- base_dir
+
 readProtoFiles(paste0(base_dir, "gtfs-realtime.proto"))
+
 stops <- read.csv(paste0(base_dir, "R/gtfs/stop_times.txt"), stringsAsFactors = FALSE)
 
-#stops$departure_time <- as.numeric(gsub(":", "", gsub("00", "", stops$departure_time)))
 stops <-cbind(as.data.frame(str_split_fixed(stops$trip_id, "-", 4),
-                               stringsAsFactors = FALSE), 
+                            stringsAsFactors = FALSE), 
               as.character(hms(stops$departure_time)),
               stops$stop_sequence,
               as.character(stops$trip_id),
               as.character(stops$stop_id))
 colnames(stops) <- c("routeID", "departure_time", "direction", 
                      "service_id", "stop_time", "sequence", "trip_id", "id")
+
 stops$id  <- as.character(stops$id)
 stops$service_id  <- as.numeric(stops$service_id)
 
-#get delay infomation
-#stop_departures <- xmlToList(xmlParse(paste0(base_dir, "api-realtime-bus/stopdepartures.xml")))
-stop_departures <- xmlToList(xmlParse("http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml")) 
-
-#use this function for parsing 
-removenulls <- function(x) {ifelse(is.null(x), NA, x)}
 
 today_now <- Sys.time()
 
 if(yday(today_now) == 365) {
-    service_id <- 91
-  } else if(wday(today_now) == 1) {
-    service_id <- 3
-  } else if(wday(today_now) == 7 ) {
-    service_id <- 2
-  } else {
-    service_id <- 1
-  }
+  service_id <- 91
+} else if(wday(today_now) == 1) {
+  service_id <- 3
+} else if(wday(today_now) == 7 ) {
+  service_id <- 2
+} else {
+  service_id <- 1
+}
 #write delay table
 delays <- data.frame(
   id = as.character(unlist(lapply(stop_departures[-1], function(x) x[[1]]))),
@@ -52,70 +58,79 @@ delays <- data.frame(
   service_id = service_id,
   stringsAsFactors = FALSE)
 
-#delays %>% filter(stop_time != "Done") %>% arrange(routeID, direction, sdt)
-
 combined_data <- inner_join(delays, stops, by = c("routeID", "sdt" = "stop_time", "direction", "service_id")) %>% 
-  select(trip_id, dev, sequence, text) %>% 
+  select(trip_id, dev, sequence) %>% 
   filter(dev > 0) %>% 
   arrange(trip_id) %>% 
-  group_by(trip_id, dev, text) %>% 
-  mutate(foo = min(sequence)) %>%
-  filter(foo == sequence) %>%
-  unique() %>% select(-foo) %>% 
-  #remove artifacts from 7J/7A
-  group_by(trip_id, sequence) %>% filter(row_number(text) == 1) 
+  group_by(trip_id, dev)
 
-
-combined_data %>% group_by(trip_id, sequence) %>% filter(row_number(text) == 1) 
-           
-data_for_protobuf <- data_for_protobuf <- combined_data
-
-current_trips <- unique(combined_data$trip_id)
-
-protobuf_list <- vector(mode = "list", length = length(current_trips))
-
-for(i in 1:length(current_trips)) {
+if(dim(combined_data)[1] != 0) {
   
-   deviation <- data_for_protobuf %>% filter(trip_id == "8-1417-I-1") %>% arrange(sequence)
-   stop_time_update_list <- vector(mode = "list", length = dim(deviation)[1])
-   
-  for(j in 1:dim(deviation)[1]) { 
-   
-  entity_id <- as.character(deviation$trip_id[j])
-  n_seconds_delay <- as.numeric(deviation$dev[j])
-  stop_sequence_number <- deviation$sequence[j]
-  trip_id <- as.character(deviation$trip_id[j])
+
+  data_for_protobuf <-   combined_data %>%
+    mutate(min_seq = min(sequence)) %>%
+    filter(min_seq == sequence) %>%
+    unique() 
+        
+  current_trips <- unique(combined_data$trip_id)
   
-  stop_time_update_object <- new(transit_realtime.TripUpdate.StopTimeUpdate,
-                                 stop_sequence = stop_sequence_number,
-                                 arrival = new(transit_realtime.TripUpdate.StopTimeEvent,
-                                               delay = n_seconds_delay)
-  )
+  protobuf_list <- vector(mode = "list", length = length(current_trips))
   
-  stop_time_update_list[j] <- stop_time_update_object
-  
+  for(i in 1:length(current_trips)) {
+    
+    deviation <- data_for_protobuf %>% filter(trip_id == current_trips[i]) %>% arrange(sequence)
+    stop_time_update_list <- vector(mode = "list", length = dim(deviation)[1])
+    
+    for(j in 1:dim(deviation)[1]) { 
+      
+
+      trip_id <- as.character(deviation$trip_id[j])
+      
+      
+      stop_time_update_object <- new(transit_realtime.TripUpdate.StopTimeUpdate,
+                                     stop_sequence = deviation$sequence[j],
+                                     arrival = new(transit_realtime.TripUpdate.StopTimeEvent,
+                                                   delay = as.numeric(deviation$dev[j]))
+      )
+      
+      stop_time_update_list[j] <- stop_time_update_object
+      
+    }
+    
+    e <- new(transit_realtime.FeedEntity,
+             id = as.character(deviation$trip_id[j]),
+             trip_update = new(transit_realtime.TripUpdate,
+                               trip = new(transit_realtime.TripDescriptor,
+                                          trip_id = as.character(deviation$trip_id[j])),
+                               stop_time_update = stop_time_update_list
+             )
+    )
+    
+    protobuf_list[i] <- e
   }
   
-  e <- new(transit_realtime.FeedEntity,
-           id = entity_id,
-           trip_update = new(transit_realtime.TripUpdate,
-                             trip = new(transit_realtime.TripDescriptor,
-                                        trip_id = entity_id),
-                             stop_time_update = stop_time_update_list
-           )
-  )
-           
-  protobuf_list[i] <- e
+  header_object <- new(transit_realtime.FeedHeader,
+                       gtfs_realtime_version = "1.0",
+                       incrementality = "FULL_DATASET",
+                       timestamp = as.numeric(as.POSIXlt(Sys.time(), "AKST")))
+  
+  m <- new(transit_realtime.FeedMessage,
+           header = header_object,
+           entity = protobuf_list) # use entity_list
+  
+  writeLines(as.character(m))
+  serialize(m, paste0(write_dir, "people_mover.pb"))
+  
+} else { # write no message in the protobuf.  Just update the header with the timestamp.
+  
+  header_object <- new(transit_realtime.FeedHeader,
+                       gtfs_realtime_version = "1.0",
+                       incrementality = "FULL_DATASET",
+                       timestamp = as.numeric(as.POSIXlt(Sys.time(), "AKST")))
+  
+  m <- new(transit_realtime.FeedMessage,
+           header = header_object) # use entity_list
+  
+  writeLines(as.character(m))
+  serialize(m, paste0(write_dir, "people_mover.pb"))
 }
-
-header_object <- new(transit_realtime.FeedHeader,
-                     gtfs_realtime_version = "1.0",
-                     incrementality = "FULL_DATASET",
-                     timestamp = as.numeric(as.POSIXlt(Sys.time(), "AKST")))
-
-m <- new(transit_realtime.FeedMessage,
-         header = header_object,
-         entity = protobuf_list) # use entity_list
-
-writeLines(as.character(m))
-serialize(m, paste0(base_dir, "people_mover.pb"))
