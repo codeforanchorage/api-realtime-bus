@@ -6,16 +6,16 @@ library(XML)
 library(stringr)
 library(RProtoBuf)
 
-#base_dir <- "/home/ubuntu/api-realtime-bus/"
-base_dir <- "/home/ht/Desktop/git/api-realtime-bus/"
+base_dir <- "/home/ubuntu/api-realtime-bus/"
+#base_dir <- "/home/ht/Desktop/git/api-realtime-bus/"
 
 #get delay infomation
 #stop_departures <- xmlToList(xmlParse(paste0(base_dir, "api-realtime-bus/stopdepartures.xml")))
 stop_departures <- xmlToList(xmlParse("http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml")) 
 
 #directory to write to 
-#write_dir <- "/usr/share/nginx/html/"
-write_dir <- base_dir
+write_dir <- "/usr/share/nginx/html/"
+#write_dir <- base_dir
 
 readProtoFiles(paste0(base_dir, "gtfs-realtime.proto"))
 
@@ -62,7 +62,7 @@ combined_data <- inner_join(delays, stops, by = c("routeID", "sdt" = "stop_time"
   select(trip_id, dev, sequence) %>% 
   filter(dev > 0) %>% 
   arrange(trip_id) %>% 
-  group_by(trip_id, dev)
+  group_by(trip_id, dev)  
 
 if(dim(combined_data)[1] != 0) {
   
@@ -70,7 +70,8 @@ if(dim(combined_data)[1] != 0) {
   data_for_protobuf <-   combined_data %>%
     mutate(min_seq = min(sequence)) %>%
     filter(min_seq == sequence) %>%
-    unique() 
+    unique() %>% group_by(trip_id, sequence) %>% filter(row_number(sequence) == 1) %>%
+    arrange(trip_id, sequence) 
         
   current_trips <- unique(combined_data$trip_id)
   
