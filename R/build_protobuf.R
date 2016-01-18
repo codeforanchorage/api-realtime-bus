@@ -65,7 +65,6 @@ combined_data <- inner_join(delays, stops, by = c("routeID", "sdt" = "stop_time"
   group_by(trip_id, dev)  
 
 if(dim(combined_data)[1] != 0) {
-  
 
   data_for_protobuf <-   combined_data %>%
     mutate(min_seq = min(sequence)) %>%
@@ -83,10 +82,8 @@ if(dim(combined_data)[1] != 0) {
     stop_time_update_list <- vector(mode = "list", length = dim(deviation)[1])
     
     for(j in 1:dim(deviation)[1]) { 
-      
-
+    
       trip_id <- as.character(deviation$trip_id[j])
-      
       
       stop_time_update_object <- new(transit_realtime.TripUpdate.StopTimeUpdate,
                                      stop_sequence = deviation$sequence[j],
