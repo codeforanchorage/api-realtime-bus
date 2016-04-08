@@ -6,8 +6,8 @@ library(XML)
 library(stringr)
 library(RProtoBuf)
 
-base_dir <- "/home/ubuntu/api-realtime-bus/"
-#base_dir <- "/home/ht/Desktop/git/api-realtime-bus/"
+#base_dir <- "/home/ubuntu/api-realtime-bus/"
+base_dir <- "/home/ht/git/api-realtime-bus/"
 
 #get delay infomation
 #stop_departures <- xmlToList(xmlParse(paste0(base_dir, "api-realtime-bus/stopdepartures.xml")))
@@ -57,6 +57,8 @@ delays <- data.frame(
   stop_time = unlist(lapply(stop_departures[-1], function(x) x[[3]][[2]])),
   service_id = service_id,
   stringsAsFactors = FALSE)
+
+delays <- delays %>% filter(hm(edt) > hms(strsplit(as.character(now()), split = " ")[[1]][2]))
 
 combined_data <- inner_join(delays, stops, by = c("routeID", "sdt" = "stop_time", "direction", "service_id")) %>% 
   select(trip_id, dev, sequence) %>% 
