@@ -6,8 +6,8 @@ library(XML)
 library(stringr)
 library(RProtoBuf)
 
-#base_dir <- "/home/ubuntu/api-realtime-bus/"
-base_dir <- "/home/ht/git/api-realtime-bus/"
+base_dir <- "/home/ubuntu/api-realtime-bus/"
+#base_dir <- "/home/ht/git/api-realtime-bus/"
 
 #get delay infomation
 #stop_departures <- xmlToList(xmlParse(paste0(base_dir, "api-realtime-bus/stopdepartures.xml")))
