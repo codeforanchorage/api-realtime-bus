@@ -14,8 +14,8 @@ base_dir <- "/home/ubuntu/api-realtime-bus/"
 stop_departures <- xmlToList(xmlParse("http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml")) 
 
 #directory to write to 
-write_dir <- "/usr/share/nginx/html/"
-#write_dir <- base_dir
+#write_dir <- "/usr/share/nginx/html/"
+write_dir <- base_dir
 
 readProtoFiles(paste0(base_dir, "gtfs-realtime.proto"))
 
@@ -52,15 +52,21 @@ delays <- data.frame(
   direction = unlist(lapply(stop_departures[-1], function(x) x[[3]][[6]])),
   dev = unlist(lapply(lapply(stop_departures[-1], function(x) x[[3]][[3]]), removenulls)),
   edt = unlist(lapply(stop_departures[-1], function(x) x[[3]][[1]])),
-  sdt = as.character(hm(unlist(lapply(stop_departures[-1], function(x) x[[3]][[2]])))),
+  sdt = as.character(hm(unlist(lapply(stop_departures[-1], function(x) x[[3]][[2]]))) + minutes(1)),
+  sdt_uncut = unlist(lapply(stop_departures[-1], function(x) x[[3]][[2]])), 
   text = unlist(lapply(stop_departures[-1], function(x) x[[3]][[4]])),
   stop_time = unlist(lapply(stop_departures[-1], function(x) x[[3]][[2]])),
   service_id = service_id,
-  stringsAsFactors = FALSE)
+  stringsAsFactors = FALSE) %>%
+  filter(stop_time != "Done")
 
-#delays <- delays %>% filter(hm(edt) > hms(strsplit(as.character(now()), split = " ")[[1]][2]))
-delays <- delays %>% filter(edt > stop_time)
 
+#delays %>% nrow
+#delays %>% filter(hm(edt) > hms(strsplit(as.character(now()), split = " ")[[1]][2])) %>% nrow
+#delays %>% filter(edt > stop_time) %>% nrow
+#delays %>% filter(hm(edt) < sdt) %>% nrow
+delays <- delays %>% filter(as.numeric(strptime(edt, format = "%H:%M")) >
+                  as.numeric(strptime(sdt_uncut, format = "%H:%M")))
 
 combined_data <- inner_join(delays, stops, by = c("routeID", "sdt" = "stop_time", "direction", "service_id")) %>% 
   select(trip_id, dev, sequence) %>% 
