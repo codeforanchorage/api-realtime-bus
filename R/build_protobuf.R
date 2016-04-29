@@ -60,11 +60,6 @@ delays <- data.frame(
   stringsAsFactors = FALSE) %>%
   filter(stop_time != "Done")
 
-
-#delays %>% nrow
-#delays %>% filter(hm(edt) > hms(strsplit(as.character(now()), split = " ")[[1]][2])) %>% nrow
-#delays %>% filter(edt > stop_time) %>% nrow
-#delays %>% filter(hm(edt) < sdt) %>% nrow
 delays <- delays %>% filter(as.numeric(strptime(edt, format = "%H:%M")) >
                   as.numeric(strptime(sdt_uncut, format = "%H:%M")))
 
@@ -73,6 +68,8 @@ combined_data <- inner_join(delays, stops, by = c("routeID", "sdt" = "stop_time"
   filter(dev > 0) %>% 
   arrange(trip_id) %>% 
   group_by(trip_id, dev)  
+
+combined_data <- combined_data %>% group_by(trip_id) %>% filter(sequence == min(sequence))
 
 if(dim(combined_data)[1] != 0) {
 
