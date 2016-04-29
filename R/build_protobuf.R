@@ -14,8 +14,8 @@ base_dir <- "/home/ubuntu/api-realtime-bus/"
 stop_departures <- xmlToList(xmlParse("http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml")) 
 
 #directory to write to 
-#write_dir <- "/usr/share/nginx/html/"
-write_dir <- base_dir
+write_dir <- "/usr/share/nginx/html/"
+#write_dir <- base_dir
 
 readProtoFiles(paste0(base_dir, "gtfs-realtime.proto"))
 
