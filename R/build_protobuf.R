@@ -1,4 +1,5 @@
 #use this function for parsing 
+options(stringsAsFactors = FALSE)
 removenulls <- function(x) {ifelse(is.null(x), NA, x)}
 library(lubridate)
 library(dplyr)
@@ -12,9 +13,9 @@ base_dir <- "/home/ubuntu/api-realtime-bus/"
 #get delay infomation
 #stop_departures <- xmlToList(xmlParse(paste0(base_dir, "api-realtime-bus/stopdepartures.xml")))
 stop_departures <- xmlToList(xmlParse("http://bustracker.muni.org/InfoPoint/XML/stopdepartures.xml")) 
-
 #directory to write to 
-write_dir <- "/usr/share/nginx/html/"
+# write_dir <- "/usr/share/nginx/html/"
+write_dir <- "/var/www/html/"
 #write_dir <- base_dir
 
 readProtoFiles(paste0(base_dir, "gtfs-realtime.proto"))
@@ -31,19 +32,20 @@ colnames(stops) <- c("routeID", "departure_time", "direction",
                      "service_id", "stop_time", "sequence", "trip_id", "id")
 
 stops$id  <- as.character(stops$id)
-stops$service_id  <- as.numeric(stops$service_id)
+#stops$service_id  <- as.numeric(stops$service_id)
 
 
 today_now <- as.POSIXct(format(Sys.time(), tz="America/Anchorage",usetz=TRUE))
 
-if(yday(today_now) > yday(mdy(paste0("12-24-",year(today_now))))) {
-  service_id <- 91
+if(yday(today_now) == yday(mdy(paste0("12-24-",year(today_now))))) {
+  service_id <- "1x"
 } else if(wday(today_now) == 1) {
-  service_id <- 3
+  service_id <- "3"
 } else if(wday(today_now) == 7 ) {
-  service_id <- 2
+  service_id <- "2"
 } else {
-  service_id <- 1
+  service_id <- "1"
+ 
 }
 #write delay table
 delays <- data.frame(
@@ -59,6 +61,10 @@ delays <- data.frame(
   service_id = service_id,
   stringsAsFactors = FALSE) %>%
   filter(stop_time != "Done")
+
+delays <- delays %>%
+    mutate(direction = str_replace(direction, "L","O"))
+
 
 delays <- delays %>% filter(as.numeric(strptime(edt, format = "%H:%M")) >
                   as.numeric(strptime(sdt_uncut, format = "%H:%M")))
