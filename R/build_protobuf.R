@@ -60,6 +60,7 @@ delays <- data.frame(
   stringsAsFactors = FALSE) %>%
   filter(stop_time != "Done")
 
+#replace Ls with Os for direction in loop routes liek 11, 21, 41
 delays <- delays %>% filter(as.numeric(strptime(edt, format = "%H:%M")) >
                   as.numeric(strptime(sdt_uncut, format = "%H:%M")))
 
